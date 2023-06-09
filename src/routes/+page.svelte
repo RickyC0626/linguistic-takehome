@@ -27,11 +27,11 @@
       const pageInfo = data.pageInfo;
 
       hasNextPage = pageInfo.hasNextPage;
-      after = pageInfo.endCursor!;
+      if (pageInfo.endCursor !== undefined) after = pageInfo.endCursor;
 
       if (edges.length > 0) {
         edges.forEach((edge) => {
-          users.push(edge.node!);
+          if (edge.node !== undefined) users.push(edge.node);
         });
         users = users;
       }

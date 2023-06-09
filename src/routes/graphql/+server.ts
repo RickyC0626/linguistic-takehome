@@ -44,7 +44,7 @@ const yogaApp = createYoga<RequestEvent>({
             const afterIdx = users.findIndex(
               (user) => user.id.toString() === after
             );
-            let start = afterIdx > -1 ? afterIdx + 1 : 0;
+            const start = afterIdx > -1 ? afterIdx + 1 : 0;
 
             for (let i = start; i < start + first; i++) {
               populateEdges(edges, i);
