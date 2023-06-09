@@ -1,10 +1,99 @@
-type User {
-	id: ID
+"""
+An object with an ID
+"""
+interface Node {
+	"""
+	Id of the object.
+	"""
+	id: ID!
+}
+
+type User implements Node {
+	id: ID!
+
+	"""
+	Full name of the user.
+	"""
 	name: String
+
+	"""
+	URL string of the user's avatar
+	"""
 	avatar: String
+
+	"""
+	Email of the user.
+	"""
 	email: String
 }
 
+"""
+The connection type for User
+"""
+type UserProfileConnection {
+	edges: [UserProfileEdge]
+
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+
+type UserProfileEdge {
+	cursor: String!
+	node: User
+}
+
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+	"""
+	When paginating backwards, the cursor the continue.
+	"""
+	startCursor: String
+
+	"""
+	When paginating forward, the cursor to continue.
+	"""
+	endCursor: String
+
+	"""
+	When paginating forwards, are there more items?
+	"""
+	hasNextPage: Boolean!
+
+	"""
+	When paginating forwards, are there more items?
+	"""
+	hasPreviousPage: Boolean!
+}
+
 type Query {
-	users(offset: Int, limit: Int): [User]
+	users(
+		"""
+		Return the first n elements from the list.
+		"""
+		first: Int
+
+		"""
+		Return the last n elements from the list.
+		"""
+		last: Int
+
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: String
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: String
+	): UserProfileConnection!
 }

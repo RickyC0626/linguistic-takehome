@@ -2,67 +2,79 @@
 	import { cacheExchange, createClient, fetchExchange, gql, queryStore } from '@urql/svelte';
 	import Loader from 'components/Loader.svelte';
 	import User from 'components/User.svelte';
-	import type { UserType } from 'lib/types';
+	import type { UserProfileConnection, UserType } from 'lib/types';
 
 	const client = createClient({
 		url: '/graphql',
 		exchanges: [cacheExchange, fetchExchange]
 	});
 
-	let offset = 0;
-	const limit = 10;
-	let hasNextPage = true;
+	const first = 10;
+	let after = "";
+	let hasNextPage = false;
 
 	let users: UserType[] = [];
 	$: {
 		if($result.data) {
-			const data = $result.data;
-			console.log(data);
+			const data = $result.data.users;
+			const edges = data.edges;
+			const pageInfo = data.pageInfo;
 
-			if(data.users) {
-				users.push(...data.users);
+			hasNextPage = pageInfo.hasNextPage;
+			after = pageInfo.endCursor!;
+
+			if(edges.length > 0) {
+				edges.forEach(edge => {
+					users.push(edge.node!);
+				});
 				users = users;
 			}
-			else {
-				hasNextPage = false;
-				offset -= limit;
-			};
 		}
 	};
 
-	const fetchUsers = ({ offset, limit }: {
-		offset: number;
-		limit: number;
+	const fetchUsers = ({ first, last, before, after }: {
+		first?: number;
+		last?: number;
+		before?: string;
+		after?: string;
 	}) => {
-		return queryStore<{ users: UserType[] }>({
+		return queryStore<{ users: UserProfileConnection }>({
 			client,
 			query: gql`
-				query ($offset: Int, $limit: Int) {
-					users (offset: $offset, limit: $limit) {
-						id
-						name
-						avatar
-						email
+				query ($first: Int, $last: Int, $before: String, $after: String) {
+					users (first: $first, last: $last, before: $before, after: $after) {
+						pageInfo {
+							hasNextPage
+							endCursor
+						}
+						edges {
+							cursor
+							node {
+								id
+								name
+								avatar
+								email
+							}
+						}
 					}
 				}
 			`,
-			variables: { offset, limit }
+			variables: { first, last, before, after }
 		});
 	};
 
-	let result = fetchUsers({ offset, limit });
+	let result = fetchUsers({ first, after });
 
 	const detectScrollToPageBottom = (e: UIEvent & {
     currentTarget: EventTarget & HTMLDivElement;
 	}) => {
+		// Wait for previous fetch to resolve before fetching next page
 		if($result.fetching) return;
 
 		const el = e.target as HTMLDivElement;
 
 		if(hasNextPage && el.scrollHeight - el.scrollTop === el.clientHeight) {
-			console.log(`offset: ${offset} --> ${offset + limit}`);
-			offset += limit;
-			result = fetchUsers({ offset, limit });
+			result = fetchUsers({ first, after });
 		}
 	};
 </script>
