@@ -44,8 +44,18 @@ type UserProfileConnection {
 	totalCount: Int!
 }
 
+"""
+An edge in a connection.
+"""
 type UserProfileEdge {
+	"""
+	A cursor for use in pagination.
+	"""
 	cursor: String!
+
+	"""
+	The item at the end of the edge.
+	"""
 	node: User
 }
 
@@ -75,6 +85,9 @@ type PageInfo {
 }
 
 type Query {
+	"""
+	A list of registered users.
+	"""
 	users(
 		"""
 		Return the first n elements from the list.
