@@ -1,5 +1,5 @@
-import { createYoga, createSchema } from 'graphql-yoga';
 import { useGraphQlJit } from '@envelop/graphql-jit';
+import { createSchema, createYoga } from 'graphql-yoga';
 
 import type { RequestEvent } from '@sveltejs/kit';
 
@@ -12,7 +12,20 @@ const yogaApp = createYoga<RequestEvent>({
 		typeDefs: schema,
 		resolvers: {
 			Query: {
-				users: (source, args, context, info) => users
+				// https://the-guild.dev/graphql/tools/docs/resolvers
+				users: (source, args, context, info) => {
+					// Offset & limit pagination
+					const { offset, limit }: {
+						offset: number;
+						limit: number;
+					} = args;
+
+					if (offset >= users.length)
+						return null;
+
+					// Slice returns copy of section, might lead to increased memory usage
+					return users.slice(offset, offset + limit);
+				}
 			}
 		}
 	}),
@@ -21,3 +34,4 @@ const yogaApp = createYoga<RequestEvent>({
 });
 
 export { yogaApp as GET, yogaApp as POST };
+
