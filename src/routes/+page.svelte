@@ -69,7 +69,9 @@
 			<User {user} />
 		{/each}
 		{#if $result.fetching}
-			<Loader />
+			<div class="p-8">
+				<Loader />
+			</div>
 		{/if}
 	</div>
 </div>
