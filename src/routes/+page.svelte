@@ -11,6 +11,7 @@
 
 	let offset = 0;
 	const limit = 10;
+	let hasNextPage = true;
 
 	let users: UserType[] = [];
 	$: {
@@ -22,7 +23,10 @@
 				users.push(...data.users);
 				users = users;
 			}
-			else offset -= limit;
+			else {
+				hasNextPage = false;
+				offset -= limit;
+			};
 		}
 	};
 
@@ -55,7 +59,7 @@
 
 		const el = e.target as HTMLDivElement;
 
-		if(el.scrollHeight - el.scrollTop === el.clientHeight) {
+		if(hasNextPage && el.scrollHeight - el.scrollTop === el.clientHeight) {
 			console.log(`offset: ${offset} --> ${offset + limit}`);
 			offset += limit;
 			result = fetchUsers({ offset, limit });
