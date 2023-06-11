@@ -1,9 +1,8 @@
-export type Node = {
+export interface Node {
   id: string;
 };
 
-export type UserType = {
-  id: string;
+export type UserType = Node & {
   name?: string;
   email?: string;
   avatar?: string;
@@ -15,10 +14,12 @@ export type UserProfileConnection = {
   totalCount: number;
 };
 
-export type UserProfileEdge = {
+export interface Edge<T> {
   cursor: string;
-  node?: UserType;
-};
+  node?: T;
+}
+
+export type UserProfileEdge = Edge<UserType> & {};
 
 export type PageInfo = {
   startCursor?: string;

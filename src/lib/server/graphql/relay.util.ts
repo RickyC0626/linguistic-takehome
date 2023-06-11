@@ -1,13 +1,13 @@
-import type { UserProfileEdge } from "lib/types";
+import type { Edge } from "lib/types";
 
 // https://relay.dev/graphql/connections.htm#HasNextPage()
-export function hasNextPage(
-  allEdges: UserProfileEdge[],
+export function hasNextPage<T>(
+  allEdges: Edge<T>[],
   first: number,
   last: number,
   before: string,
   after: string
-) {
+): boolean {
   // If first is set
   // a. Let edges be the result of calling applyCursorsToEdges(allEdges, before, after)
   // b. If edges contains more than first elements return true, otherwise false
@@ -24,11 +24,11 @@ export function hasNextPage(
 }
 
 // https://relay.dev/graphql/connections.htm#ApplyCursorsToEdges()
-export function applyCursorsToEdges(
-  allEdges: UserProfileEdge[],
+export function applyCursorsToEdges<T>(
+  allEdges: Edge<T>[],
   before: string,
   after: string
-): UserProfileEdge[] {
+): Edge<T>[] {
   // Initialize edges to be allEdges
   let edges = allEdges;
 
