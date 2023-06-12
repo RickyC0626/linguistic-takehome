@@ -1,23 +1,25 @@
-import { createYoga, createSchema } from 'graphql-yoga';
-import { useGraphQlJit } from '@envelop/graphql-jit';
+import { useGraphQlJit } from "@envelop/graphql-jit";
+import { createSchema, createYoga } from "graphql-yoga";
 
-import type { RequestEvent } from '@sveltejs/kit';
+import type { RequestEvent } from "@sveltejs/kit";
 
-import { users } from '$lib/data';
-
-import schema from '$lib/schema.gql';
+import schema from "$lib/schema.gql";
+import { allUserEdges, handleUsersQuery } from "lib/server/graphql/users.query";
 
 const yogaApp = createYoga<RequestEvent>({
-	schema: createSchema({
-		typeDefs: schema,
-		resolvers: {
-			Query: {
-				users: (source, args, context, info) => users
-			}
-		}
-	}),
-	plugins: [useGraphQlJit()],
-	fetchAPI: globalThis
+  schema: createSchema({
+    typeDefs: schema,
+    resolvers: {
+      Query: {
+        // https://the-guild.dev/graphql/tools/docs/resolvers
+        users: (source, args) => {
+          return handleUsersQuery(allUserEdges, args);
+        }
+      }
+    }
+  }),
+  plugins: [useGraphQlJit()],
+  fetchAPI: globalThis
 });
 
 export { yogaApp as GET, yogaApp as POST };
