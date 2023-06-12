@@ -19,7 +19,34 @@ export function hasNextPage<T>(
 
     if (
       (first !== undefined && edges.length > first) ||
-      (last !== undefined && edges.length > last)
+      (before && last !== undefined && edges.length > last)
+    )
+      return true;
+  }
+
+  return false;
+}
+
+// https://relay.dev/graphql/connections.htm#HasPreviousPage()
+export function hasPreviousPage<T>(
+  allEdges: Edge<T>[],
+  first?: number,
+  last?: number,
+  before?: string,
+  after?: string
+): boolean {
+  // If last is set
+  // a. Let edges be the result of calling applyCursorsToEdges(allEdges, before, after)
+  // b. If edges contains more than last elements return true, otherwise false
+
+  // If after is set
+  // a. If the server can efficiently determine that elements exist prior to after, return true
+  if (last || after) {
+    const edges = applyCursorsToEdges(allEdges, before, after);
+
+    if (
+      (last !== undefined && edges.length > last) ||
+      (after && first !== undefined && edges.length > first)
     )
       return true;
   }

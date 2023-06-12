@@ -4,7 +4,8 @@ import {
   applyCursorsToEdges,
   calcEndCursor,
   calcStartCursor,
-  hasNextPage
+  hasNextPage,
+  hasPreviousPage
 } from "./relay.util";
 
 export const allUserEdges: UserProfileEdge[] = users.map((user) => ({
@@ -47,7 +48,7 @@ export function handleUsersQuery(
     totalCount: edges.length,
     pageInfo: {
       hasNextPage: hasNextPage(allEdges, first, last, before, after),
-      hasPreviousPage: false,
+      hasPreviousPage: hasPreviousPage(allEdges, first, last, before, after),
       startCursor: calcStartCursor(edges),
       endCursor: calcEndCursor(edges)
     },

@@ -125,18 +125,35 @@ describe("handleUsersQuery", () => {
       expect(edges[1].node).toEqual(expected[1]);
     });
 
-    test("should have next page if there are more elements to query", () => {
+    test("should have next page if there are more edges after cursor", () => {
       const connection = handleUsersQuery(mockUserEdges, { first: 5 });
       const pageInfo = connection.pageInfo;
 
       expect(pageInfo.hasNextPage).toBeTruthy();
     });
 
-    test("should not have next page if there are no more elements to query", () => {
+    test("should not have next page if there are no more edges after cursor", () => {
       const connection = handleUsersQuery(mockUserEdges, { first: 11 });
       const pageInfo = connection.pageInfo;
 
       expect(pageInfo.hasNextPage).toBeFalsy();
+    });
+
+    test("should have previous page if there are more edges further from cursor", () => {
+      const connection = handleUsersQuery(mockUserEdges, {
+        first: 2,
+        after: "8"
+      });
+      const pageInfo = connection.pageInfo;
+
+      expect(pageInfo.hasPreviousPage).toBeTruthy();
+    });
+
+    test("should not have previous page if there are no more edges further from cursor", () => {
+      const connection = handleUsersQuery(mockUserEdges, { first: 2 });
+      const pageInfo = connection.pageInfo;
+
+      expect(pageInfo.hasPreviousPage).toBeFalsy();
     });
   });
 
@@ -171,7 +188,7 @@ describe("handleUsersQuery", () => {
       expect(edges[1].node).toEqual(expected[1]);
     });
 
-    test("should have next page if there are more elements to query", () => {
+    test("should have next page if there are more edges further from before", () => {
       const connection = handleUsersQuery(mockUserEdges, {
         last: 5,
         before: "90"
@@ -181,11 +198,31 @@ describe("handleUsersQuery", () => {
       expect(pageInfo.hasNextPage).toBeTruthy();
     });
 
-    test("should not have next page if there are no more elements to query", () => {
+    test("should not have next page if there are no more edges further from before", () => {
       const connection = handleUsersQuery(mockUserEdges, { last: 11 });
       const pageInfo = connection.pageInfo;
 
       expect(pageInfo.hasNextPage).toBeFalsy();
+    });
+
+    test("should have previous page if edges exist prior to before", () => {
+      const connection = handleUsersQuery(mockUserEdges, {
+        last: 2,
+        before: "6"
+      });
+      const pageInfo = connection.pageInfo;
+
+      expect(pageInfo.hasPreviousPage).toBeTruthy();
+    });
+
+    test("should not have previous page if edges don't exist prior to before", () => {
+      const connection = handleUsersQuery(mockUserEdges, {
+        last: 2,
+        before: "2"
+      });
+      const pageInfo = connection.pageInfo;
+
+      expect(pageInfo.hasPreviousPage).toBeFalsy();
     });
   });
 
