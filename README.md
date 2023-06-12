@@ -17,3 +17,9 @@ npm run dev
 ```
 
 Finally, open `http://localhost:5173` in your browser
+
+Run unit tests
+
+```bash
+npm run test:unit
+```
