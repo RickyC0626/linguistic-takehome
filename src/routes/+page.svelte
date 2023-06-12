@@ -15,7 +15,6 @@
     exchanges: [cacheExchange, fetchExchange]
   });
 
-  const first = 10;
   let after = "";
   let hasNextPage = false;
 
@@ -70,11 +69,11 @@
           }
         }
       `,
-      variables: { first, last, before, after }
+      variables: { first: 10, last, before, after }
     });
   };
 
-  let result = fetchUsers({ first, after });
+  let result = fetchUsers({ after });
 
   const detectScrollToPageBottom = (
     e: UIEvent & {
@@ -87,7 +86,7 @@
     const el = e.target as HTMLDivElement;
 
     if (hasNextPage && el.scrollHeight - el.scrollTop === el.clientHeight) {
-      result = fetchUsers({ first, after });
+      result = fetchUsers({ after });
     }
   };
 </script>
@@ -97,6 +96,14 @@
     {#each users as user (user.id)}
       <User {user} />
     {/each}
+    {#if hasNextPage && !$result.fetching}
+      <button
+        class="bg-gray-300 px-8 py-6 rounded mt-4"
+        on:click={() => result = fetchUsers({ after })}
+      >
+        <span class="font-bold text-xl">Load More Users</span>
+      </button>
+    {/if}
     {#if $result.fetching}
       <div class="p-8">
         <Loader />
