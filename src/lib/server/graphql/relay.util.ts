@@ -1,8 +1,8 @@
-import type { Edge } from "lib/types";
+import type { Edge, Node } from "lib/types";
 
 // https://relay.dev/graphql/connections.htm#HasNextPage()
-export function hasNextPage<T>(
-  allEdges: Edge<T>[],
+export function hasNextPage(
+  allEdges: Edge<Node>[],
   first?: number,
   last?: number,
   before?: string,
@@ -28,8 +28,8 @@ export function hasNextPage<T>(
 }
 
 // https://relay.dev/graphql/connections.htm#HasPreviousPage()
-export function hasPreviousPage<T>(
-  allEdges: Edge<T>[],
+export function hasPreviousPage(
+  allEdges: Edge<Node>[],
   first?: number,
   last?: number,
   before?: string,
@@ -55,11 +55,11 @@ export function hasPreviousPage<T>(
 }
 
 // https://relay.dev/graphql/connections.htm#ApplyCursorsToEdges()
-export function applyCursorsToEdges<T>(
-  allEdges: Edge<T>[],
+export function applyCursorsToEdges(
+  allEdges: Edge<Node>[],
   before?: string,
   after?: string
-): Edge<T>[] {
+): Edge<Node>[] {
   // Initialize edges to be allEdges
   let edges = allEdges;
 
@@ -94,7 +94,7 @@ export function applyCursorsToEdges<T>(
 // https://relay.dev/graphql/connections.htm#sec-undefined.PageInfo.Fields
 // When paginating backwards, startCursor is used to continue
 // When paginating forward, endCursor is used to continue
-export function calcStartCursor<T>(edges: Edge<T>[]): string | null {
+export function calcStartCursor(edges: Edge<Node>[]): string | null {
   // Can return null if no cursor is found
   if (edges.length < 1) return null;
 
@@ -102,7 +102,7 @@ export function calcStartCursor<T>(edges: Edge<T>[]): string | null {
   return edges[0].cursor;
 }
 
-export function calcEndCursor<T>(edges: Edge<T>[]): string | null {
+export function calcEndCursor(edges: Edge<Node>[]): string | null {
   // Can return null if no cursor is found
   if (edges.length < 1) return null;
 

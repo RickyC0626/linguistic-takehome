@@ -14,9 +14,9 @@ export type UserProfileConnection = {
   totalCount: number;
 };
 
-export interface Edge<T> {
+export interface Edge<Node> {
   cursor: string;
-  node?: T;
+  node?: Node;
 }
 
 export type UserProfileEdge = Edge<UserType>;
