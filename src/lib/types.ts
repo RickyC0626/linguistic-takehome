@@ -19,11 +19,11 @@ export interface Edge<T> {
   node?: T;
 }
 
-export type UserProfileEdge = Edge<UserType> & {};
+export type UserProfileEdge = Edge<UserType>;
 
 export type PageInfo = {
-  startCursor?: string;
-  endCursor?: string;
+  startCursor?: string | null;
+  endCursor?: string | null;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
 };

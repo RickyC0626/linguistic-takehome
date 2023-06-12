@@ -124,6 +124,20 @@ describe("handleUsersQuery", () => {
       expect(edges[0].node).toEqual(expected[0]);
       expect(edges[1].node).toEqual(expected[1]);
     });
+
+    test("should have next page if there are more elements to query", () => {
+      const connection = handleUsersQuery(mockUserEdges, { first: 5 });
+      const pageInfo = connection.pageInfo;
+
+      expect(pageInfo.hasNextPage).toBeTruthy();
+    });
+
+    test("should not have next page if there are no more elements to query", () => {
+      const connection = handleUsersQuery(mockUserEdges, { first: 11 });
+      const pageInfo = connection.pageInfo;
+
+      expect(pageInfo.hasNextPage).toBeFalsy();
+    });
   });
 
   describe("Backward pagination", () => {
@@ -155,6 +169,23 @@ describe("handleUsersQuery", () => {
       expect(edges.length).toBe(2);
       expect(edges[0].node).toEqual(expected[0]);
       expect(edges[1].node).toEqual(expected[1]);
+    });
+
+    test("should have next page if there are more elements to query", () => {
+      const connection = handleUsersQuery(mockUserEdges, {
+        last: 5,
+        before: "90"
+      });
+      const pageInfo = connection.pageInfo;
+
+      expect(pageInfo.hasNextPage).toBeTruthy();
+    });
+
+    test("should not have next page if there are no more elements to query", () => {
+      const connection = handleUsersQuery(mockUserEdges, { last: 11 });
+      const pageInfo = connection.pageInfo;
+
+      expect(pageInfo.hasNextPage).toBeFalsy();
     });
   });
 

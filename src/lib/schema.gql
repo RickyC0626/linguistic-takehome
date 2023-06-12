@@ -64,7 +64,7 @@ Information about pagination in a connection.
 """
 type PageInfo {
   """
-  When paginating backwards, the cursor the continue.
+  When paginating backwards, the cursor to continue.
   """
   startCursor: String
 

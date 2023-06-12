@@ -27,7 +27,7 @@
       const pageInfo = data.pageInfo;
 
       hasNextPage = pageInfo.hasNextPage;
-      if (pageInfo.endCursor !== undefined) after = pageInfo.endCursor;
+      if (pageInfo.endCursor) after = pageInfo.endCursor;
 
       if (edges.length > 0) {
         edges.forEach((edge) => {

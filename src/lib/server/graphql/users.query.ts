@@ -1,6 +1,11 @@
 import { users } from "lib/data";
 import type { UserProfileConnection, UserProfileEdge } from "lib/types";
-import { applyCursorsToEdges, hasNextPage } from "./relay.util";
+import {
+  applyCursorsToEdges,
+  calcEndCursor,
+  calcStartCursor,
+  hasNextPage
+} from "./relay.util";
 
 export const allUserEdges: UserProfileEdge[] = users.map((user) => ({
   cursor: user.id.toString(),
@@ -43,8 +48,8 @@ export function handleUsersQuery(
     pageInfo: {
       hasNextPage: hasNextPage(allEdges, first, last, before, after),
       hasPreviousPage: false,
-      startCursor: edges[0]?.cursor,
-      endCursor: edges.at(-1)?.cursor
+      startCursor: calcStartCursor(edges),
+      endCursor: calcEndCursor(edges)
     },
     edges
   };

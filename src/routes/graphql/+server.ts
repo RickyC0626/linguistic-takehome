@@ -12,7 +12,7 @@ const yogaApp = createYoga<RequestEvent>({
     resolvers: {
       Query: {
         // https://the-guild.dev/graphql/tools/docs/resolvers
-        users: (source, args, context, info) => {
+        users: (source, args) => {
           return handleUsersQuery(allUserEdges, args);
         }
       }

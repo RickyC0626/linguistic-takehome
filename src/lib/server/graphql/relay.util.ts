@@ -63,3 +63,22 @@ export function applyCursorsToEdges<T>(
   // Return edges
   return edges;
 }
+
+// https://relay.dev/graphql/connections.htm#sec-undefined.PageInfo.Fields
+// When paginating backwards, startCursor is used to continue
+// When paginating forward, endCursor is used to continue
+export function calcStartCursor<T>(edges: Edge<T>[]): string | null {
+  // Can return null if no cursor is found
+  if (edges.length < 1) return null;
+
+  // Must correspond to the first node in edges
+  return edges[0].cursor;
+}
+
+export function calcEndCursor<T>(edges: Edge<T>[]): string | null {
+  // Can return null if no cursor is found
+  if (edges.length < 1) return null;
+
+  // Must correspond to the last node in edges
+  return edges[edges.length - 1].cursor;
+}
