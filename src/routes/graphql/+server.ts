@@ -4,7 +4,7 @@ import { createSchema, createYoga } from "graphql-yoga";
 import type { RequestEvent } from "@sveltejs/kit";
 
 import schema from "$lib/schema.gql";
-import { handleUsersQuery } from "lib/server/graphql/users.query";
+import { allUserEdges, handleUsersQuery } from "lib/server/graphql/users.query";
 
 const yogaApp = createYoga<RequestEvent>({
   schema: createSchema({
@@ -12,7 +12,9 @@ const yogaApp = createYoga<RequestEvent>({
     resolvers: {
       Query: {
         // https://the-guild.dev/graphql/tools/docs/resolvers
-        users: handleUsersQuery
+        users: (source, args, context, info) => {
+          return handleUsersQuery(allUserEdges, args);
+        }
       }
     }
   }),

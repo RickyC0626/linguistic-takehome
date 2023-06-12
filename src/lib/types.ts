@@ -1,6 +1,6 @@
 export interface Node {
   id: string;
-};
+}
 
 export type UserType = Node & {
   name?: string;

@@ -3,10 +3,10 @@ import type { Edge } from "lib/types";
 // https://relay.dev/graphql/connections.htm#HasNextPage()
 export function hasNextPage<T>(
   allEdges: Edge<T>[],
-  first: number,
-  last: number,
-  before: string,
-  after: string
+  first?: number,
+  last?: number,
+  before?: string,
+  after?: string
 ): boolean {
   // If first is set
   // a. Let edges be the result of calling applyCursorsToEdges(allEdges, before, after)
@@ -17,7 +17,11 @@ export function hasNextPage<T>(
   if (first || before) {
     const edges = applyCursorsToEdges(allEdges, before, after);
 
-    if (edges.length > first || edges.length > last) return true;
+    if (
+      (first !== undefined && edges.length > first) ||
+      (last !== undefined && edges.length > last)
+    )
+      return true;
   }
 
   return false;
@@ -26,8 +30,8 @@ export function hasNextPage<T>(
 // https://relay.dev/graphql/connections.htm#ApplyCursorsToEdges()
 export function applyCursorsToEdges<T>(
   allEdges: Edge<T>[],
-  before: string,
-  after: string
+  before?: string,
+  after?: string
 ): Edge<T>[] {
   // Initialize edges to be allEdges
   let edges = allEdges;

@@ -1,8 +1,8 @@
 import { users } from "lib/data";
 import type { UserProfileConnection, UserProfileEdge } from "lib/types";
-import { hasNextPage } from "./relay.util";
+import { applyCursorsToEdges, hasNextPage } from "./relay.util";
 
-export const allEdges: UserProfileEdge[] = users.map((user) => ({
+export const allUserEdges: UserProfileEdge[] = users.map((user) => ({
   cursor: user.id.toString(),
   node: {
     ...user,
@@ -11,12 +11,12 @@ export const allEdges: UserProfileEdge[] = users.map((user) => ({
 }));
 
 export function handleUsersQuery(
-  source: any,
+  allEdges: UserProfileEdge[],
   args: {
-    first: number;
-    last: number;
-    before: string;
-    after: string;
+    first?: number;
+    last?: number;
+    before?: string;
+    after?: string;
   }
 ): UserProfileConnection {
   const { first, last, before, after } = args;
@@ -24,26 +24,18 @@ export function handleUsersQuery(
   if (first && last) throw Error("Cannot have both first and last");
   if (after && before) throw Error("Cannot have both after and before");
 
-  const edges: UserProfileEdge[] = [];
+  let edges: UserProfileEdge[] = applyCursorsToEdges(allEdges, before, after);
 
   if (first) {
-    const afterIdx = users.findIndex((user) => user.id.toString() === after);
-    const start = afterIdx > -1 ? afterIdx + 1 : 0;
+    if (first < 0) throw Error("'first' must be a non-negative integer");
 
-    for (let i = start; i < start + first; i++) {
-      populateEdges(edges, i);
-    }
+    if (edges.length > first) edges = edges.slice(0, first);
   } else if (last) {
-    const beforeIdx = users.findIndex((user) => user.id.toString() === before);
-    const start = beforeIdx > -1 ? beforeIdx - 1 : users.length - 1;
+    if (last < 0) throw Error("'last' must be a non-negative integer");
 
-    for (let i = start; i > start - last; i--) {
-      populateEdges(edges, i);
-    }
+    if (edges.length > last) edges = edges.slice(edges.length - last);
   } else {
-    for (let i = 0; i < users.length; i++) {
-      populateEdges(edges, i);
-    }
+    edges = edges.slice(0, 10);
   }
 
   const connection: UserProfileConnection = {
@@ -58,18 +50,4 @@ export function handleUsersQuery(
   };
 
   return connection;
-}
-
-function populateEdges(edges: UserProfileEdge[], i: number) {
-  if (i < 0 || i >= users.length) return;
-
-  const user = users[i];
-  const edge: UserProfileEdge = {
-    cursor: user.id.toString(),
-    node: {
-      ...user,
-      id: user.id.toString()
-    }
-  };
-  edges.push(edge);
 }
