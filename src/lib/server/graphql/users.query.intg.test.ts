@@ -32,6 +32,7 @@ const connectionIntrospection = await makeIntrospectionQuery(
   "UserProfileConnection"
 );
 const edgeIntrospection = await makeIntrospectionQuery("UserProfileEdge");
+const pageInfoIntrospection = await makeIntrospectionQuery("PageInfo");
 
 describe("UserProfileConnection", () => {
   describe("introspection query", () => {
@@ -120,6 +121,87 @@ describe("UserProfileEdge", () => {
       expect(
         fields.some(
           (field) => JSON.stringify(field) === JSON.stringify(expectedNode)
+        )
+      ).toBeTruthy();
+    });
+  });
+});
+
+describe("PageInfo", () => {
+  describe("introspection query", () => {
+    test("should return the proper response", () => {
+      const json = (pageInfoIntrospection as any).data;
+
+      expect(json.__type).toBeDefined();
+      expect(json.__type.fields).toBeDefined();
+
+      const fields = json.__type.fields as Array<any>;
+      const expectedHasNextPage = {
+        name: "hasNextPage",
+        type: {
+          name: null,
+          kind: "NON_NULL",
+          ofType: {
+            name: "Boolean",
+            kind: "SCALAR"
+          }
+        }
+      };
+
+      expect(
+        fields.some(
+          (field) =>
+            JSON.stringify(field) === JSON.stringify(expectedHasNextPage)
+        )
+      ).toBeTruthy();
+
+      const expectedHasPreviousPage = {
+        name: "hasPreviousPage",
+        type: {
+          name: null,
+          kind: "NON_NULL",
+          ofType: {
+            name: "Boolean",
+            kind: "SCALAR"
+          }
+        }
+      };
+
+      expect(
+        fields.some(
+          (field) =>
+            JSON.stringify(field) === JSON.stringify(expectedHasPreviousPage)
+        )
+      ).toBeTruthy();
+
+      const expectedStartCursor = {
+        name: "startCursor",
+        type: {
+          name: "String",
+          kind: "SCALAR",
+          ofType: null
+        }
+      };
+
+      expect(
+        fields.some(
+          (field) =>
+            JSON.stringify(field) === JSON.stringify(expectedStartCursor)
+        )
+      ).toBeTruthy();
+
+      const expectedEndCursor = {
+        name: "endCursor",
+        type: {
+          name: "String",
+          kind: "SCALAR",
+          ofType: null
+        }
+      };
+
+      expect(
+        fields.some(
+          (field) => JSON.stringify(field) === JSON.stringify(expectedEndCursor)
         )
       ).toBeTruthy();
     });
