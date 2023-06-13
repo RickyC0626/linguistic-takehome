@@ -38,7 +38,7 @@
   }
 
   const fetchUsers = ({
-    first,
+    first = 10,
     last,
     before,
     after
@@ -69,7 +69,7 @@
           }
         }
       `,
-      variables: { first: 10, last, before, after }
+      variables: { first, last, before, after }
     });
   };
 
