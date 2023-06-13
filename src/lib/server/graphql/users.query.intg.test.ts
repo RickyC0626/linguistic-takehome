@@ -7,10 +7,11 @@ const executor = buildHTTPExecutor({
   fetch: GET.fetch
 });
 
-const connectionIntrospection = await executor({
-  document: parse(`
+const makeIntrospectionQuery = async (typeName: string) =>
+  await executor({
+    document: parse(`
     query {
-      __type(name: "UserProfileConnection") {
+      __type(name: "${typeName}") {
         fields {
           name
           type {
@@ -25,7 +26,12 @@ const connectionIntrospection = await executor({
       }
     }
   `)
-});
+  });
+
+const connectionIntrospection = await makeIntrospectionQuery(
+  "UserProfileConnection"
+);
+const edgeIntrospection = await makeIntrospectionQuery("UserProfileEdge");
 
 describe("UserProfileConnection", () => {
   describe("introspection query", () => {
@@ -69,6 +75,51 @@ describe("UserProfileConnection", () => {
       expect(
         fields.some(
           (field) => JSON.stringify(field) === JSON.stringify(expectedEdges)
+        )
+      ).toBeTruthy();
+    });
+  });
+});
+
+describe("UserProfileEdge", () => {
+  describe("introspection query", () => {
+    test("should return the proper response", () => {
+      const json = (edgeIntrospection as any).data;
+
+      expect(json.__type).toBeDefined();
+      expect(json.__type.fields).toBeDefined();
+
+      const fields = json.__type.fields as Array<any>;
+      const expectedCursor = {
+        name: "cursor",
+        type: {
+          name: null,
+          kind: "NON_NULL",
+          ofType: {
+            name: "String",
+            kind: "SCALAR"
+          }
+        }
+      };
+
+      expect(
+        fields.some(
+          (field) => JSON.stringify(field) === JSON.stringify(expectedCursor)
+        )
+      ).toBeTruthy();
+
+      const expectedNode = {
+        name: "node",
+        type: {
+          name: "User",
+          kind: "OBJECT",
+          ofType: null
+        }
+      };
+
+      expect(
+        fields.some(
+          (field) => JSON.stringify(field) === JSON.stringify(expectedNode)
         )
       ).toBeTruthy();
     });
