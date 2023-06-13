@@ -75,7 +75,7 @@
 
   let result = fetchUsers({ after });
 
-  const detectScrollToPageBottom = (
+  const detectScrollToBottom = (
     e: UIEvent & {
       currentTarget: EventTarget & HTMLDivElement;
     }
@@ -91,22 +91,35 @@
   };
 </script>
 
-<div class="w-full h-full overflow-scroll" on:scroll={detectScrollToPageBottom}>
-  <div class="flex flex-col gap-4 items-center p-4">
-    {#each users as user (user.id)}
-      <User {user} />
-    {/each}
-    {#if hasNextPage && !$result.fetching}
-      <button
-        class="bg-gray-300 px-8 py-6 rounded mt-4"
-        on:click={() => (result = fetchUsers({ after }))}>
-        <span class="font-bold text-xl">Load More Users</span>
-      </button>
-    {/if}
-    {#if $result.fetching}
-      <div class="p-8">
-        <Loader />
-      </div>
-    {/if}
+<div
+  class="w-full h-full bg-gradient-to-br from-amber-400 to-green-400 grid place-items-center">
+  <div
+    class="
+    w-[24rem] h-[32rem] sm:w-[28rem] sm:h-[36rem] md:w-[32rem] md:h-[40rem] lg:w-[48rem] lg:h-[48rem]
+    bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden
+  ">
+    <div
+      class="relative h-full flex flex-col gap-4 items-center p-6 pb-0 overflow-y-scroll"
+      on:scroll={detectScrollToBottom}>
+      {#each users as user (user.id)}
+        <User {user} />
+      {/each}
+      {#if hasNextPage && !$result.fetching}
+        <button
+          class="bg-gray-100 px-8 py-6 rounded mt-4"
+          on:click={() => (result = fetchUsers({ after }))}>
+          <span class="font-bold text-xl">Load More Users</span>
+        </button>
+      {/if}
+    </div>
+    <div
+      class="
+      sticky bottom-0 w-full grid place-content-center bg-white
+      outline outline-1 outline-gray-300 rounded-t-lg p-6
+      transition-all duration-200 ease-in-out
+      {$result.fetching ? 'translate-y-0' : 'translate-y-28'}
+    ">
+      <Loader />
+    </div>
   </div>
 </div>
