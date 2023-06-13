@@ -12,7 +12,12 @@
     "test:unit": "vitest",
     "test:unit-coverage": "vitest run --coverage",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
-    "format": "prettier --plugin-search-dir . --write ."
+    "format": "prettier --plugin-search-dir . --write .",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{js,ts,html,css,svelte}": "prettier --write",
+    "*.{js,ts,svelte}": "eslint --fix"
   },
   "devDependencies": {
     "@playwright/test": "^1.33.0",
@@ -25,6 +30,7 @@
     "eslint": "^8.40.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-svelte3": "^4.0.0",
+    "lint-staged": "^13.2.2",
     "postcss": "^8.4.23",
     "postcss-load-config": "^4.0.1",
     "prettier": "^2.8.8",
@@ -36,7 +42,8 @@
     "typescript": "^5.0.4",
     "vite": "^4.3.5",
     "vite-plugin-graphql-loader": "^2.0.0",
-    "vitest": "^0.31.4"
+    "vitest": "^0.31.4",
+    "husky": "^8.0.0"
   },
   "type": "module",
   "dependencies": {
