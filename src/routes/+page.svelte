@@ -99,8 +99,7 @@
     {#if hasNextPage && !$result.fetching}
       <button
         class="bg-gray-300 px-8 py-6 rounded mt-4"
-        on:click={() => result = fetchUsers({ after })}
-      >
+        on:click={() => (result = fetchUsers({ after }))}>
         <span class="font-bold text-xl">Load More Users</span>
       </button>
     {/if}
