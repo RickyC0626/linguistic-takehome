@@ -94,7 +94,10 @@
 <div
   class="w-full h-full bg-gradient-to-br from-amber-400 to-green-400 grid place-items-center">
   <div
-    class="w-[50%] h-[80%] bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden">
+    class="
+    w-[24rem] h-[32rem] sm:w-[28rem] sm:h-[36rem] md:w-[32rem] md:h-[40rem] lg:w-[48rem] lg:h-[48rem]
+    bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden
+  ">
     <div
       class="relative h-full flex flex-col gap-4 items-center p-6 pb-0 overflow-y-scroll"
       on:scroll={detectScrollToBottom}>
