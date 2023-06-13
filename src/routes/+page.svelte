@@ -91,22 +91,28 @@
   };
 </script>
 
-<div class="w-full h-full overflow-scroll" on:scroll={detectScrollToPageBottom}>
-  <div class="flex flex-col gap-4 items-center p-4">
-    {#each users as user (user.id)}
-      <User {user} />
-    {/each}
-    {#if hasNextPage && !$result.fetching}
-      <button
-        class="bg-gray-300 px-8 py-6 rounded mt-4"
-        on:click={() => (result = fetchUsers({ after }))}>
-        <span class="font-bold text-xl">Load More Users</span>
-      </button>
-    {/if}
-    {#if $result.fetching}
-      <div class="p-8">
-        <Loader />
-      </div>
-    {/if}
-  </div>
+<div
+  class="w-full h-full bg-gradient-to-br from-amber-400 to-green-400 grid place-items-center">
+  <section
+    class="w-[50%] h-[80%] p-6 bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden">
+    <div
+      class="h-full flex flex-col gap-4 items-center overflow-y-scroll"
+      on:scroll={detectScrollToPageBottom}>
+      {#each users as user (user.id)}
+        <User {user} />
+      {/each}
+      {#if hasNextPage && !$result.fetching}
+        <button
+          class="bg-gray-100 px-8 py-6 rounded mt-4"
+          on:click={() => (result = fetchUsers({ after }))}>
+          <span class="font-bold text-xl">Load More Users</span>
+        </button>
+      {/if}
+      {#if $result.fetching}
+        <div class="p-8">
+          <Loader />
+        </div>
+      {/if}
+    </div>
+  </section>
 </div>
