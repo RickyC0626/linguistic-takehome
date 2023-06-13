@@ -75,7 +75,7 @@
 
   let result = fetchUsers({ after });
 
-  const detectScrollToPageBottom = (
+  const detectScrollToBottom = (
     e: UIEvent & {
       currentTarget: EventTarget & HTMLDivElement;
     }
@@ -94,10 +94,10 @@
 <div
   class="w-full h-full bg-gradient-to-br from-amber-400 to-green-400 grid place-items-center">
   <section
-    class="w-[50%] h-[80%] p-6 bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden">
+    class="w-[50%] h-[80%] bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden">
     <div
-      class="h-full flex flex-col gap-4 items-center overflow-y-scroll"
-      on:scroll={detectScrollToPageBottom}>
+      class="h-full flex flex-col gap-4 items-center overflow-y-scroll p-6"
+      on:scroll={detectScrollToBottom}>
       {#each users as user (user.id)}
         <User {user} />
       {/each}
