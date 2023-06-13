@@ -93,10 +93,10 @@
 
 <div
   class="w-full h-full bg-gradient-to-br from-amber-400 to-green-400 grid place-items-center">
-  <section
+  <div
     class="w-[50%] h-[80%] bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden">
     <div
-      class="h-full flex flex-col gap-4 items-center overflow-y-scroll p-6"
+      class="relative h-full flex flex-col gap-4 items-center p-6 pb-0 overflow-y-scroll"
       on:scroll={detectScrollToBottom}>
       {#each users as user (user.id)}
         <User {user} />
@@ -108,11 +108,15 @@
           <span class="font-bold text-xl">Load More Users</span>
         </button>
       {/if}
-      {#if $result.fetching}
-        <div class="p-8">
-          <Loader />
-        </div>
-      {/if}
     </div>
-  </section>
+    <div
+      class="
+      sticky bottom-0 w-full grid place-content-center bg-white
+      outline outline-1 outline-gray-300 rounded-t-lg p-6
+      transition-all duration-200 ease-in-out
+      {$result.fetching ? 'translate-y-0' : 'translate-y-28'}
+    ">
+      <Loader />
+    </div>
+  </div>
 </div>
