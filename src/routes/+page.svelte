@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Icon from "@iconify/svelte";
   import {
     cacheExchange,
     createClient,
@@ -94,32 +95,56 @@
 <div
   class="w-full h-full bg-gradient-to-br from-amber-400 to-green-400 grid place-items-center">
   <div
-    class="
-    w-[24rem] h-[32rem] sm:w-[28rem] sm:h-[36rem] md:w-[32rem] md:h-[40rem] lg:w-[48rem] lg:h-[48rem]
-    bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden
-  ">
-    <div
-      class="relative h-full flex flex-col gap-4 items-center p-6 pb-0 overflow-y-scroll"
-      on:scroll={detectScrollToBottom}>
-      {#each users as user (user.id)}
-        <User {user} />
-      {/each}
-      {#if hasNextPage && !$result.fetching}
-        <button
-          class="bg-gray-100 px-8 py-6 rounded mt-4"
-          on:click={() => (result = fetchUsers({ after }))}>
-          <span class="font-bold text-xl">Load More Users</span>
+    class="flex flex-col gap-4 w-[24rem] h-[32rem] sm:w-[28rem] sm:h-[36rem] md:w-[32rem] md:h-[40rem] lg:w-[48rem] lg:h-[48rem]">
+    <div class="bg-white/50 backdrop-blur-sm rounded-lg p-6">
+      <form
+        class="flex gap-4"
+        on:submit|preventDefault={() => console.log("searching...")}>
+        <div class="flex grow">
+          <Icon
+            icon="ion:search"
+            rotate={1}
+            class="absolute text-gray-800 place-self-center w-6 h-6 translate-x-3" />
+          <input
+            type="text"
+            name="search_user_by_name"
+            placeholder="Search user by name..."
+            class="
+              bg-transparent border-2 border-gray-700/50 rounded-md p-2
+              focus-visible:border-gray-800 focus-visible:outline-none
+              w-full h-10 pl-11 placeholder:text-gray-800/50
+              text-lg text-gray-800 font-bold
+            " />
+        </div>
+        <button class="bg-gray-800 px-3 rounded-lg">
+          <span class="text-white">Search!</span>
         </button>
-      {/if}
+      </form>
     </div>
-    <div
-      class="
-      sticky bottom-0 w-full grid place-content-center bg-white
-      outline outline-1 outline-gray-300 rounded-t-lg p-6
-      transition-all duration-200 ease-in-out
-      {$result.fetching ? 'translate-y-0' : 'translate-y-28'}
-    ">
-      <Loader />
+    <div class="grow bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden">
+      <div
+        class="relative h-full flex flex-col gap-4 items-center p-6 pb-0 overflow-y-scroll"
+        on:scroll={detectScrollToBottom}>
+        {#each users as user (user.id)}
+          <User {user} />
+        {/each}
+        {#if hasNextPage && !$result.fetching}
+          <button
+            class="bg-gray-100 px-8 py-6 rounded mt-4"
+            on:click={() => (result = fetchUsers({ after }))}>
+            <span class="font-bold text-xl">Load More Users</span>
+          </button>
+        {/if}
+      </div>
+      <div
+        class="
+        sticky bottom-0 w-full grid place-content-center bg-white
+        outline outline-1 outline-gray-300 rounded-t-lg p-6
+        transition-all duration-200 ease-in-out
+        {$result.fetching ? 'translate-y-0' : 'translate-y-28'}
+      ">
+        <Loader />
+      </div>
     </div>
   </div>
 </div>
