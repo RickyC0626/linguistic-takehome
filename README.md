@@ -1,6 +1,6 @@
-# The Linguistic Full Stack Challenge
+# The Super Duper Über [REDACTED]
 
-If you're reading this, you've already been given instructions :wink:
+![Demo Image](./static/demo.png)
 
 ## Installation
 
