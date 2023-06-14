@@ -1,15 +1,10 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import {
-    cacheExchange,
-    createClient,
-    fetchExchange,
-    gql,
-    queryStore
-  } from "@urql/svelte";
+  import { cacheExchange, createClient, fetchExchange } from "@urql/svelte";
   import Loader from "components/Loader.svelte";
   import User from "components/User.svelte";
-  import type { UserProfileConnection, UserType } from "lib/types";
+  import { fetchUsers } from "lib/client/fetchUsers";
+  import type { UserType } from "lib/types";
 
   const client = createClient({
     url: "/graphql",
@@ -37,42 +32,6 @@
       }
     }
   }
-
-  const fetchUsers = ({
-    first = 10,
-    last,
-    before,
-    after
-  }: {
-    first?: number;
-    last?: number;
-    before?: string;
-    after?: string;
-  }) => {
-    return queryStore<{ users: UserProfileConnection }>({
-      client,
-      query: gql`
-        query ($first: Int, $last: Int, $before: String, $after: String) {
-          users(first: $first, last: $last, before: $before, after: $after) {
-            pageInfo {
-              hasNextPage
-              endCursor
-            }
-            edges {
-              cursor
-              node {
-                id
-                name
-                avatar
-                email
-              }
-            }
-          }
-        }
-      `,
-      variables: { first, last, before, after }
-    });
-  };
 
   let result = fetchUsers({ after });
 
