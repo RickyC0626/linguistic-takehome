@@ -1,16 +1,6 @@
-import {
-  cacheExchange,
-  createClient,
-  fetchExchange,
-  gql,
-  queryStore
-} from "@urql/svelte";
+import { gql, queryStore } from "@urql/svelte";
 import type { UserProfileConnection } from "lib/types";
-
-const client = createClient({
-  url: "/graphql",
-  exchanges: [cacheExchange, fetchExchange]
-});
+import { client } from "./client";
 
 export const fetchUsers = ({
   first = 10,

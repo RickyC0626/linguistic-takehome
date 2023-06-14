@@ -1,15 +1,9 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import { cacheExchange, createClient, fetchExchange } from "@urql/svelte";
   import Loader from "components/Loader.svelte";
   import User from "components/User.svelte";
   import { fetchUsers } from "lib/client/fetchUsers";
   import type { UserType } from "lib/types";
-
-  const client = createClient({
-    url: "/graphql",
-    exchanges: [cacheExchange, fetchExchange]
-  });
 
   let after = "";
   let hasNextPage = false;
