@@ -1,24 +1,21 @@
 <script lang="ts">
-  import {
-    cacheExchange,
-    createClient,
-    fetchExchange,
-    gql,
-    queryStore
-  } from "@urql/svelte";
   import Loader from "components/Loader.svelte";
+  import SearchBar from "components/SearchBar.svelte";
   import User from "components/User.svelte";
-  import type { UserProfileConnection, UserType } from "lib/types";
+  import { fetchUsers } from "lib/client/fetchUsers";
+  import { filteredUsersStore, usersStore } from "lib/client/store/users";
+  import type { UserType } from "lib/types";
 
-  const client = createClient({
-    url: "/graphql",
-    exchanges: [cacheExchange, fetchExchange]
-  });
+  let users: UserType[] = [];
+  usersStore.subscribe((store) => (users = store));
+  let filteredUsers: UserType[] = [];
+  filteredUsersStore.subscribe((store) => (filteredUsers = store));
 
   let after = "";
   let hasNextPage = false;
 
-  let users: UserType[] = [];
+  let result = fetchUsers({ after });
+
   $: {
     if ($result.data) {
       const data = $result.data.users;
@@ -29,51 +26,17 @@
       if (pageInfo.endCursor) after = pageInfo.endCursor;
 
       if (edges.length > 0) {
+        const newNodes: UserType[] = [];
+
         edges.forEach((edge) => {
-          if (edge.node !== undefined) users.push(edge.node);
+          if (edge.node !== undefined) {
+            newNodes.push(edge.node);
+          }
         });
-        users = users;
+        usersStore.set([...users, ...newNodes]);
       }
     }
   }
-
-  const fetchUsers = ({
-    first = 10,
-    last,
-    before,
-    after
-  }: {
-    first?: number;
-    last?: number;
-    before?: string;
-    after?: string;
-  }) => {
-    return queryStore<{ users: UserProfileConnection }>({
-      client,
-      query: gql`
-        query ($first: Int, $last: Int, $before: String, $after: String) {
-          users(first: $first, last: $last, before: $before, after: $after) {
-            pageInfo {
-              hasNextPage
-              endCursor
-            }
-            edges {
-              cursor
-              node {
-                id
-                name
-                avatar
-                email
-              }
-            }
-          }
-        }
-      `,
-      variables: { first, last, before, after }
-    });
-  };
-
-  let result = fetchUsers({ after });
 
   const detectScrollToBottom = (
     e: UIEvent & {
@@ -94,32 +57,34 @@
 <div
   class="w-full h-full bg-gradient-to-br from-amber-400 to-green-400 grid place-items-center">
   <div
-    class="
-    w-[24rem] h-[32rem] sm:w-[28rem] sm:h-[36rem] md:w-[32rem] md:h-[40rem] lg:w-[48rem] lg:h-[48rem]
-    bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden
-  ">
-    <div
-      class="relative h-full flex flex-col gap-4 items-center p-6 pb-0 overflow-y-scroll"
-      on:scroll={detectScrollToBottom}>
-      {#each users as user (user.id)}
-        <User {user} />
-      {/each}
-      {#if hasNextPage && !$result.fetching}
-        <button
-          class="bg-gray-100 px-8 py-6 rounded mt-4"
-          on:click={() => (result = fetchUsers({ after }))}>
-          <span class="font-bold text-xl">Load More Users</span>
-        </button>
-      {/if}
+    class="flex flex-col gap-4 w-[24rem] h-[32rem] sm:w-[28rem] sm:h-[36rem] md:w-[32rem] md:h-[40rem] lg:w-[48rem] lg:h-[48rem]">
+    <div class="bg-white/50 backdrop-blur-sm rounded-lg p-6">
+      <SearchBar />
     </div>
-    <div
-      class="
-      sticky bottom-0 w-full grid place-content-center bg-white
-      outline outline-1 outline-gray-300 rounded-t-lg p-6
-      transition-all duration-200 ease-in-out
-      {$result.fetching ? 'translate-y-0' : 'translate-y-28'}
-    ">
-      <Loader />
+    <div class="grow bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden">
+      <div
+        class="relative h-full flex flex-col gap-4 items-center p-6 overflow-y-scroll"
+        on:scroll={detectScrollToBottom}>
+        {#each filteredUsers as user (user.id)}
+          <User {user} />
+        {/each}
+        {#if hasNextPage && !$result.fetching}
+          <button
+            class="bg-gray-100 px-8 py-6 rounded mt-4"
+            on:click={() => (result = fetchUsers({ after }))}>
+            <span class="font-bold text-xl">Load More Users</span>
+          </button>
+        {/if}
+      </div>
+      <div
+        class="
+        sticky bottom-0 w-full grid place-content-center bg-white
+        outline outline-1 outline-gray-300 rounded-t-lg p-6
+        transition-all duration-200 ease-in-out
+        {$result.fetching ? 'translate-y-0' : 'translate-y-28'}
+      ">
+        <Loader />
+      </div>
     </div>
   </div>
 </div>
