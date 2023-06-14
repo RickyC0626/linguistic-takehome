@@ -1,14 +1,19 @@
 <script lang="ts">
-  import Icon from "@iconify/svelte";
   import Loader from "components/Loader.svelte";
+  import SearchBar from "components/SearchBar.svelte";
   import User from "components/User.svelte";
   import { fetchUsers } from "lib/client/fetchUsers";
+  import { usersStore } from "lib/client/store/users";
   import type { UserType } from "lib/types";
+
+  let users: UserType[] = [];
+  usersStore.subscribe((store) => (users = store));
 
   let after = "";
   let hasNextPage = false;
 
-  let users: UserType[] = [];
+  let result = fetchUsers({ after });
+
   $: {
     if ($result.data) {
       const data = $result.data.users;
@@ -19,15 +24,17 @@
       if (pageInfo.endCursor) after = pageInfo.endCursor;
 
       if (edges.length > 0) {
+        const newNodes: UserType[] = [];
+
         edges.forEach((edge) => {
-          if (edge.node !== undefined) users.push(edge.node);
+          if (edge.node !== undefined) {
+            newNodes.push(edge.node);
+          }
         });
-        users = users;
+        usersStore.set([...users, ...newNodes]);
       }
     }
   }
-
-  let result = fetchUsers({ after });
 
   const detectScrollToBottom = (
     e: UIEvent & {
@@ -50,33 +57,11 @@
   <div
     class="flex flex-col gap-4 w-[24rem] h-[32rem] sm:w-[28rem] sm:h-[36rem] md:w-[32rem] md:h-[40rem] lg:w-[48rem] lg:h-[48rem]">
     <div class="bg-white/50 backdrop-blur-sm rounded-lg p-6">
-      <form
-        class="flex gap-4"
-        on:submit|preventDefault={() => console.log("searching...")}>
-        <div class="flex grow">
-          <Icon
-            icon="ion:search"
-            rotate={1}
-            class="absolute text-gray-800 place-self-center w-6 h-6 translate-x-3" />
-          <input
-            type="text"
-            name="search_user_by_name"
-            placeholder="Search user by name..."
-            class="
-              bg-transparent border-2 border-gray-700/50 rounded-md p-2
-              focus-visible:border-gray-800 focus-visible:outline-none
-              w-full h-10 pl-11 placeholder:text-gray-800/50
-              text-lg text-gray-800 font-bold
-            " />
-        </div>
-        <button class="bg-gray-800 px-3 rounded-lg">
-          <span class="text-white">Search!</span>
-        </button>
-      </form>
+      <SearchBar />
     </div>
     <div class="grow bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden">
       <div
-        class="relative h-full flex flex-col gap-4 items-center p-6 pb-0 overflow-y-scroll"
+        class="relative h-full flex flex-col gap-4 items-center p-6 overflow-y-scroll"
         on:scroll={detectScrollToBottom}>
         {#each users as user (user.id)}
           <User {user} />

@@ -109,4 +109,14 @@ type Query {
     """
     before: String
   ): UserProfileConnection!
+
+  """
+  Search for users by name, or similar name
+  """
+  searchUsers(
+    """
+    The user name to search for
+    """
+    name: String
+  ): UserProfileConnection!
 }
