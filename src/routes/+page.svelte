@@ -3,11 +3,13 @@
   import SearchBar from "components/SearchBar.svelte";
   import User from "components/User.svelte";
   import { fetchUsers } from "lib/client/fetchUsers";
-  import { usersStore } from "lib/client/store/users";
+  import { filteredUsersStore, usersStore } from "lib/client/store/users";
   import type { UserType } from "lib/types";
 
   let users: UserType[] = [];
   usersStore.subscribe((store) => (users = store));
+  let filteredUsers: UserType[] = [];
+  filteredUsersStore.subscribe((store) => (filteredUsers = store));
 
   let after = "";
   let hasNextPage = false;
@@ -63,7 +65,7 @@
       <div
         class="relative h-full flex flex-col gap-4 items-center p-6 overflow-y-scroll"
         on:scroll={detectScrollToBottom}>
-        {#each users as user (user.id)}
+        {#each filteredUsers as user (user.id)}
           <User {user} />
         {/each}
         {#if hasNextPage && !$result.fetching}

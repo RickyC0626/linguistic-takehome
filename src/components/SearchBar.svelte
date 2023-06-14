@@ -1,27 +1,28 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
+  import { userNameToSearch, usersStore } from "lib/client/store/users";
+  import type { UserType } from "lib/types";
 
-  let userNameToSearch = "";
+  let users: UserType[] = [];
+  usersStore.subscribe((store) => (users = store));
+
+  let nameToSearch = "";
   let enableSearching = true;
 
   $: if (enableSearching === false) {
     setTimeout(() => {
-      console.log(userNameToSearch);
-      userNameToSearch = "";
+      nameToSearch = "";
+      userNameToSearch.set("");
       enableSearching = true;
     }, 500);
   }
 
-  const handleSearch = (
-    e: Event & {
-      readonly submitter: HTMLElement | null;
-    } & {
-      currentTarget: EventTarget & HTMLFormElement;
-    }
-  ) => {
-    if (userNameToSearch.length < 1) return;
+  const handleSearch = () => {
+    if (nameToSearch.length < 1) return;
     enableSearching = false;
   };
+
+  const handleInput = () => userNameToSearch.set(nameToSearch);
 </script>
 
 <form class="flex gap-4" on:submit|preventDefault={handleSearch}>
@@ -33,7 +34,8 @@
     <input
       type="text"
       name="search_user_by_name"
-      bind:value={userNameToSearch}
+      bind:value={nameToSearch}
+      on:input={handleInput}
       disabled={!enableSearching}
       placeholder="Search user by name..."
       class="
