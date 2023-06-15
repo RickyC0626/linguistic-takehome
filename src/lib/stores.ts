@@ -7,8 +7,29 @@ export const filteredUsersStore = derived(
   [usersStore, userNameToSearch],
   ([users, nameToSearch]) => {
     if (nameToSearch.length < 1) return users;
-    return users.filter((user) =>
-      user.name?.toLowerCase().includes(nameToSearch.toLowerCase())
+
+    const lcSearch = nameToSearch.toLowerCase();
+    const includes = users.filter((user) =>
+      user.name?.toLowerCase().includes(lcSearch)
     );
+
+    const startsOnly: UserType[] = [];
+    const includesOnly: UserType[] = [];
+
+    includes.forEach((user) => {
+      if (user.name?.toLowerCase().startsWith(lcSearch)) startsOnly.push(user);
+      else includesOnly.push(user);
+    });
+
+    startsOnly.sort(sortUserNames);
+    includesOnly.sort(sortUserNames);
+
+    return [...startsOnly, ...includesOnly];
   }
 );
+
+function sortUserNames(a: UserType, b: UserType) {
+  if (a.name! < b.name!) return -1;
+  else if (a.name! > b.name!) return 1;
+  return 0;
+}
