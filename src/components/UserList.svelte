@@ -5,8 +5,6 @@
   import Loader from "./Loader.svelte";
   import User from "./User.svelte";
 
-  let users: UserType[] = [];
-  usersStore.subscribe((store) => (users = store));
   let filteredUsers: UserType[] = [];
   filteredUsersStore.subscribe((store) => (filteredUsers = store));
 
@@ -38,7 +36,7 @@
     if (edges.length > 0) {
       const newNodes: UserType[] = edges.map((edge) => edge.node!);
 
-      usersStore.set([...users, ...newNodes]);
+      usersStore.update((users) => [...users, ...newNodes]);
     }
   }
 </script>
