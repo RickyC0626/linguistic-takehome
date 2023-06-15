@@ -1,90 +1,26 @@
 <script lang="ts">
-  import Loader from "components/Loader.svelte";
   import SearchBar from "components/SearchBar.svelte";
-  import User from "components/User.svelte";
-  import { fetchUsers } from "lib/client/fetchUsers";
-  import { filteredUsersStore, usersStore } from "lib/client/store/users";
-  import type { UserType } from "lib/types";
-
-  let users: UserType[] = [];
-  usersStore.subscribe((store) => (users = store));
-  let filteredUsers: UserType[] = [];
-  filteredUsersStore.subscribe((store) => (filteredUsers = store));
-
-  let after = "";
-  let hasNextPage = false;
-
-  let result = fetchUsers({ after });
-
-  $: {
-    if ($result.data) {
-      const data = $result.data.users;
-      const edges = data.edges;
-      const pageInfo = data.pageInfo;
-
-      hasNextPage = pageInfo.hasNextPage;
-      if (pageInfo.endCursor) after = pageInfo.endCursor;
-
-      if (edges.length > 0) {
-        const newNodes: UserType[] = [];
-
-        edges.forEach((edge) => {
-          if (edge.node !== undefined) {
-            newNodes.push(edge.node);
-          }
-        });
-        usersStore.set([...users, ...newNodes]);
-      }
-    }
-  }
-
-  const detectScrollToBottom = (
-    e: UIEvent & {
-      currentTarget: EventTarget & HTMLDivElement;
-    }
-  ) => {
-    // Wait for previous fetch to resolve before fetching next page
-    if ($result.fetching) return;
-
-    const el = e.target as HTMLDivElement;
-
-    if (hasNextPage && el.scrollHeight - el.scrollTop === el.clientHeight) {
-      result = fetchUsers({ after });
-    }
-  };
+  import UserList from "components/UserList.svelte";
 </script>
 
-<div
-  class="w-full h-full bg-gradient-to-br from-amber-400 to-green-400 grid place-items-center">
-  <div
-    class="flex flex-col gap-4 w-[24rem] h-[32rem] sm:w-[28rem] sm:h-[36rem] md:w-[32rem] md:h-[40rem] lg:w-[48rem] lg:h-[48rem]">
-    <div class="bg-white/50 backdrop-blur-sm rounded-lg p-6">
-      <SearchBar />
-    </div>
-    <div class="grow bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden">
-      <div
-        class="relative h-full flex flex-col gap-4 items-center p-6 overflow-y-scroll"
-        on:scroll={detectScrollToBottom}>
-        {#each filteredUsers as user (user.id)}
-          <User {user} />
-        {/each}
-        {#if hasNextPage && !$result.fetching}
-          <button
-            class="bg-gray-100 px-8 py-6 rounded mt-4"
-            on:click={() => (result = fetchUsers({ after }))}>
-            <span class="font-bold text-xl">Load More Users</span>
-          </button>
-        {/if}
-      </div>
-      <div
-        class="
-        sticky bottom-0 w-full grid place-content-center bg-white
-        outline outline-1 outline-gray-300 rounded-t-lg p-6
-        transition-all duration-200 ease-in-out
-        {$result.fetching ? 'translate-y-0' : 'translate-y-28'}
-      ">
-        <Loader />
-      </div>
-    </div>
+<div class="page">
+  <div class="content-container">
+    <SearchBar />
+    <UserList />
   </div>
 </div>
+
+<style lang="postcss">
+  .page {
+    @apply w-full h-full grid place-items-center;
+    @apply bg-gradient-to-br from-amber-400 to-green-400;
+
+    .content-container {
+      @apply flex flex-col gap-4;
+      @apply w-[24rem] h-[32rem];
+      @apply sm:w-[28rem] sm:h-[36rem];
+      @apply md:w-[32rem] md:h-[40rem];
+      @apply lg:w-[48rem] lg:h-[48rem];
+    }
+  }
+</style>
