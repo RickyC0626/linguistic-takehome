@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fetchUsers } from "lib/client/fetchUsers";
-  import { filteredUsersStore, usersStore } from "lib/client/store/users";
+  import { filteredUsersStore, usersStore } from "lib/stores";
   import type { UserType } from "lib/types";
   import Loader from "./Loader.svelte";
   import User from "./User.svelte";

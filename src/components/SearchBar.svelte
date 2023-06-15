@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import { userNameToSearch } from "lib/client/store/users";
+  import { userNameToSearch } from "lib/stores";
 
   let nameToSearch = "";
   let enableSearching = true;
