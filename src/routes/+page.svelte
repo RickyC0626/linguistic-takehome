@@ -5,9 +5,7 @@
 
 <div class="page">
   <div class="content-container">
-    <div class="searchbar-container">
-      <SearchBar />
-    </div>
+    <SearchBar />
     <UserList />
   </div>
 </div>
@@ -23,11 +21,6 @@
       @apply sm:w-[28rem] sm:h-[36rem];
       @apply md:w-[32rem] md:h-[40rem];
       @apply lg:w-[48rem] lg:h-[48rem];
-
-      .searchbar-container {
-        @apply p-6 rounded-lg;
-        @apply bg-white/50 backdrop-blur-sm;
-      }
     }
   }
 </style>
