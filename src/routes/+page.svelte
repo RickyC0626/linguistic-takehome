@@ -16,42 +16,36 @@
 
   let result = fetchUsers({ after });
 
-  $: {
-    if ($result.data) {
-      const data = $result.data.users;
-      const edges = data.edges;
-      const pageInfo = data.pageInfo;
-
-      hasNextPage = pageInfo.hasNextPage;
-      if (pageInfo.endCursor) after = pageInfo.endCursor;
-
-      if (edges.length > 0) {
-        const newNodes: UserType[] = [];
-
-        edges.forEach((edge) => {
-          if (edge.node !== undefined) {
-            newNodes.push(edge.node);
-          }
-        });
-        usersStore.set([...users, ...newNodes]);
-      }
-    }
-  }
-
-  const detectScrollToBottom = (
-    e: UIEvent & {
-      currentTarget: EventTarget & HTMLDivElement;
-    }
-  ) => {
+  function onScrollToBottom(e: UIEvent) {
     // Wait for previous fetch to resolve before fetching next page
     if ($result.fetching) return;
 
-    const el = e.target as HTMLDivElement;
+    const el = e.target as HTMLElement;
 
     if (hasNextPage && el.scrollHeight - el.scrollTop === el.clientHeight) {
       result = fetchUsers({ after });
     }
-  };
+  }
+
+  $: if ($result.data) {
+    const data = $result.data.users;
+    const edges = data.edges;
+    const pageInfo = data.pageInfo;
+
+    hasNextPage = pageInfo.hasNextPage;
+    if (pageInfo.endCursor) after = pageInfo.endCursor;
+
+    if (edges.length > 0) {
+      const newNodes: UserType[] = [];
+
+      edges.forEach((edge) => {
+        if (edge.node !== undefined) {
+          newNodes.push(edge.node);
+        }
+      });
+      usersStore.set([...users, ...newNodes]);
+    }
+  }
 </script>
 
 <div
@@ -64,7 +58,7 @@
     <div class="grow bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden">
       <div
         class="relative h-full flex flex-col gap-4 items-center p-6 overflow-y-scroll"
-        on:scroll={detectScrollToBottom}>
+        on:scroll={onScrollToBottom}>
         {#each filteredUsers as user (user.id)}
           <User {user} />
         {/each}
