@@ -11,6 +11,7 @@
   let filteredUsers: UserType[] = [];
   filteredUsersStore.subscribe((store) => (filteredUsers = store));
 
+  // The endCursor to start paginating next page from
   let after = "";
   let hasNextPage = false;
 
