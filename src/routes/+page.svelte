@@ -36,13 +36,8 @@
     if (pageInfo.endCursor) after = pageInfo.endCursor;
 
     if (edges.length > 0) {
-      const newNodes: UserType[] = [];
+      const newNodes: UserType[] = edges.map((edge) => edge.node!);
 
-      edges.forEach((edge) => {
-        if (edge.node !== undefined) {
-          newNodes.push(edge.node);
-        }
-      });
       usersStore.set([...users, ...newNodes]);
     }
   }
