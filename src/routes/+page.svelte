@@ -44,14 +44,12 @@
   }
 </script>
 
-<div
-  class="w-full h-full bg-gradient-to-br from-amber-400 to-green-400 grid place-items-center">
-  <div
-    class="flex flex-col gap-4 w-[24rem] h-[32rem] sm:w-[28rem] sm:h-[36rem] md:w-[32rem] md:h-[40rem] lg:w-[48rem] lg:h-[48rem]">
-    <div class="bg-white/50 backdrop-blur-sm rounded-lg p-6">
+<div class="page">
+  <div class="content-container">
+    <div class="searchbar-container">
       <SearchBar />
     </div>
-    <div class="grow bg-white/50 backdrop-blur-sm rounded-lg overflow-hidden">
+    <div class="userlist-container">
       <div
         class="relative h-full flex flex-col gap-4 items-center p-6 overflow-y-scroll"
         on:scroll={onScrollToBottom}>
@@ -78,3 +76,28 @@
     </div>
   </div>
 </div>
+
+<style lang="postcss">
+  .page {
+    @apply w-full h-full grid place-items-center;
+    @apply bg-gradient-to-br from-amber-400 to-green-400;
+
+    .content-container {
+      @apply flex flex-col gap-4;
+      @apply w-[24rem] h-[32rem];
+      @apply sm:w-[28rem] sm:h-[36rem];
+      @apply md:w-[32rem] md:h-[40rem];
+      @apply lg:w-[48rem] lg:h-[48rem];
+
+      .searchbar-container {
+        @apply p-6 rounded-lg;
+        @apply bg-white/50 backdrop-blur-sm;
+      }
+
+      .userlist-container {
+        @apply grow rounded-lg overflow-hidden;
+        @apply bg-white/50 backdrop-blur-sm;
+      }
+    }
+  }
+</style>
